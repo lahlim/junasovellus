@@ -1,14 +1,9 @@
 "use strict";
 let asemaData = [];
 // https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=100&station=TPE
-window.onload = function(e){
+window.onload = function(e){ 
     haeAsemaData();
-    
-    //console.log(asemaData);
-    
     haeData(asemaData);
-    
-    
 }
 
 $(document).ready(function() {
@@ -17,11 +12,12 @@ $(document).ready(function() {
     
 });
 
-function haeData(asemat){
+function haeData(asema){
    fetch('https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=0&station=TPE')
   .then((res) => res.json())
   .then((data) => {
-        asematValikkoon();
+
+    //asematValikkoon();
 
       
     console.log(data);
@@ -102,8 +98,10 @@ function jarjestaSaapujat(data){
 
 // Date tyyppinen muuttuja formatoidaan tunnit:minuutit muotoon
 function formatoiAika(aika) {
+    let nolla = "0";
     let tunnit = aika.getHours();
     let minuutit = aika.getMinutes();
+    if (minuutit < 9) minuutit = nolla+=minuutit;
     let tuloste = tunnit + ":"+ minuutit;
     return tuloste;
 }
@@ -120,9 +118,10 @@ function haeAsemaData(){
           if (asemat[i].passengerTraffic == true){
             asemaData.push(asemat[i]);
           }
-          
-
         }
+    })
+    .then(() =>{
+        asematValikkoon();
     })
     
 }
@@ -134,9 +133,14 @@ function asematValikkoon(){
         let nimi = asemaData[i].stationName;
         $('#valitsin').append('<option value='+koodi+' >'+nimi+'</option>');
     }
-    
-    
+    // kuunnellaan select boksin muutosta
+    $('#valitsin').on('select2:select', function (e) {
+        //alert('Element clicked through function!');
+        console.log(this.value);
+        haeData(this.value);
+      });    
 }
+
 
 
 
