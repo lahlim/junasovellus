@@ -3,33 +3,41 @@ let asemaData = [];
 // https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=100&station=TPE
 window.onload = function(e){
     haeAsemaData();
-    asematValikkoon();
+    
     //console.log(asemaData);
+    
     haeData(asemaData);
+    
     
 }
 
 $(document).ready(function() {
     $('.js-example-basic-single').select2();
+    
+    
 });
 
 function haeData(asemat){
    fetch('https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=0&station=TPE')
   .then((res) => res.json())
   .then((data) => {
-      console.log(data);
-      console.log(asemat);
-      data.forEach(function(juna){
+        asematValikkoon();
+
+      
+    console.log(data);
+      //console.log(asemat);
+      data.forEach(function(juna, index){
         // Poistetaan tavarajunat
-        if (juna.trainCategory != "cargo"){
-            data.pop(juna);
+        
+        if (juna.trainCategory == "Cargo" ||juna.trainCategory =="Locomotive" ){//|| juna.trainType == "VET" || juna.trainType == "T"){
+            data.splice(index,1);
         }
         for (let i in juna.timeTableRows){
             // haetaan lähtö ja pääteasema
             juna.lahtoA = juna.timeTableRows[0].stationShortCode;
             juna.paateA = juna.timeTableRows[i].stationShortCode;
             
-            //juna.paateA = juna.timeTableRows[juna.timeTableRows.length].stationShortCode;
+            
             // haetaan aikataulunmukainen ja arvio saapumisesta
             if ("TPE" === juna.timeTableRows[i].stationShortCode && juna.timeTableRows[i].type == "ARRIVAL"){
                 try{
@@ -51,11 +59,7 @@ function haeData(asemat){
         
     });
     jarjestaSaapujat(data);
-
     
-
-    //TÄMÄ SETTI OMAAN FUNKTIOON
-    //teeTable(data);
 
     let output = `<table class="table table-striped table-hover">
     <thead>
@@ -81,8 +85,9 @@ function haeData(asemat){
     </tbody>
      </table>
     `
-    document.getElementById('table').innerHTML = output;    
-
+    document.getElementById('table').innerHTML = output;
+    
+    
   })
 }
 
@@ -119,16 +124,21 @@ function haeAsemaData(){
 
         }
     })
+    
 }
-
 
 function asematValikkoon(){
-    let vaihtoehdot = document.getElementById("options");
+    //let vaihtoehdot = document.getElementById("options");
     for (let i in asemaData){
-        console.log(123);
+        let koodi = asemaData[i].stationShortCode;
+        let nimi = asemaData[i].stationName;
+        $('#valitsin').append('<option value='+koodi+' >'+nimi+'</option>');
     }
-    //<option value="AL">Alabama</option>
+    
+    
 }
+
+
 
 
 
