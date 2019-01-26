@@ -4,19 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="juna.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="juna.js"></script>
     <title>Document</title>
+
 </head>
 <body>
     <h1 class="bg-success text-white" >Aseman junatiedot</h1>
-    <form>
-        Asema<br>
-        <input type="text" name="asemaNimi" id="textBox">
-      </form> 
+      <div class="asemaValikko">
+        <select class="js-example-basic-single" name="state">
+            <div id="options"></div>
+          <option value="AL">Alabama</option>
+          <option value="WY">Wyoming</option>
+        </select>
+      </div>
     <div id="table">
-        
     </div>
-    
 </body>
 </html>
