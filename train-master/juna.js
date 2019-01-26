@@ -3,25 +3,22 @@ let asemaData = [];
 // https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=100&station=TPE
 window.onload = function(e){ 
     haeAsemaData();
-    haeData(asemaData);
+    
+    haeData();
+    console.log(asemaData);
 }
 
 $(document).ready(function() {
     $('.js-example-basic-single').select2();
-    
-    
 });
 
 function haeData(asema){
-   fetch('https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=0&station=TPE')
+
+   fetch('https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=0&station='+asema)
   .then((res) => res.json())
   .then((data) => {
+    //document.getElementById('table').innerHTML = "";
 
-    //asematValikkoon();
-
-      
-    console.log(data);
-      //console.log(asemat);
       data.forEach(function(juna, index){
         // Poistetaan tavarajunat
         
@@ -35,7 +32,7 @@ function haeData(asema){
             
             
             // haetaan aikataulunmukainen ja arvio saapumisesta
-            if ("TPE" === juna.timeTableRows[i].stationShortCode && juna.timeTableRows[i].type == "ARRIVAL"){
+            if (asema === juna.timeTableRows[i].stationShortCode && juna.timeTableRows[i].type == "ARRIVAL"){
                 try{
                     juna.saapArvio = juna.timeTableRows[i].liveEstimateTime;
                     
@@ -135,7 +132,6 @@ function asematValikkoon(){
     }
     // kuunnellaan select boksin muutosta
     $('#valitsin').on('select2:select', function (e) {
-        //alert('Element clicked through function!');
         console.log(this.value);
         haeData(this.value);
       });    
