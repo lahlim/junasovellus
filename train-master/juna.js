@@ -1,3 +1,11 @@
+/**
+ * Bugin korjaus(näyttää 1 vanhan junan)
+ * Tekstin muokkaus kun cancel
+ * Aika-arvion lisäys jos myöhässä.
+ * Commuter trains?
+ * Koodin siistiminen ja githubiin lisäys avoimeksi
+ */
+
 "use strict";
 let asemaData = [];
 var buttonState = "ARRIVAL";
