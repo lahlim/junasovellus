@@ -1,6 +1,5 @@
 /**
  * Bugin korjaus(näyttää 1 vanhan junan)
- * Tekstin muokkaus kun cancel
  * Aika-arvion lisäys jos myöhässä.
  * Commuter trains?
  * Koodin siistiminen ja githubiin lisäys avoimeksi
@@ -39,7 +38,7 @@ function haeData(asema){
       data.forEach(function(juna, index){
         // Poistetaan tavarajunat
         
-        if (juna.trainCategory == "Cargo" ||juna.trainCategory =="Locomotive" ){
+        if (juna.trainCategory == "Cargo" ||juna.trainCategory =="Locomotive"||juna.trainCategory == "Shunting"){
             data.splice(index, 1);
         }
         for (let i in juna.timeTableRows){
@@ -66,7 +65,6 @@ function haeData(asema){
             }
         } 
     });
-    console.log(data);
     jarjestaSaapujat(data);
     teeTable(data);
   })
@@ -87,24 +85,42 @@ function teeTable(data){
     </thead>
     <tbody>`;
     
-    for (let i=0; i<10;i++){
+    let lkm = data.length;
+    
+    for (let i=0; i<lkm;i++){
+        let peruttu = "<tr>";
+        let peruttuCancell = '<td>';
+
+        if (data[i].cancelled == true){
+            peruttu = '<tr class="text-muted">';
+            peruttuCancell = '<td> <div class="text-danger" >Cancelled</div>';
+        }
         try{
         output += `
-            <tr>
-                <td>${data[i].trainType} ${data[i].trainNumber}</td>
-                <td>${data[i].lahtoANimi}</td>
-                <td>${data[i].paateANimi}</td>
-                <td>${formatoiAika(data[i].AikaTaulu)}</td>
+            ${peruttu}
+            <td>${data[i].trainType} ${data[i].trainNumber}</td>
+            <td>${data[i].lahtoANimi}</td>
+            <td>${data[i].paateANimi}</td>
+            ${peruttuCancell}${formatoiAika(data[i].AikaTaulu)}</td>
             </tr>
             
         `;
-        } catch (e){   }
+        } catch (e){
+             
+          }
     };
     output +=`
     </tbody>
      </table>
     `
     document.getElementById('table').innerHTML = output;
+}
+
+// Tarkistetaan onko juna peruttu
+function onkoPeruttu(juna){
+    if (juna.cancelled == true) return true;
+    else return false;
+
 }
 
 // järjestetään data asspumisjärjestykseen aikataulun mukaan
