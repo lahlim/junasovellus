@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,34 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="juna.js"></script>
     <title>Aseman Junatiedot</title>
 
 </head>
+
 <body>
-    <h3 class="bg-success text-white p-3 mb-5" >Aseman junatiedot</h3>
-      <div class="asemaValikko ml-3">
-          <h5 class="">Hae aseman nimellä</h5>
-        <select id="valitsin" class="js-example-basic-single " style="width: 40%;" name="state">
+    <h3 class="bg-success text-white p-3 mb-5">Aseman junatiedot</h3>
+    <div class="asemaValikko ml-3">
+        <h5 class="">Hae aseman nimellä</h5>
+        <select id="valitsin" class="js-example-basic-single" style="width: 40%;" name="state">
         </select>
-      </div>
-    <div id="table" class="p-3">
     </div>
+    <div class="btn-group colors mt-1" data-toggle="buttons">
+            <label class="btn btn-outline-success active ml-3">
+              <input type="radio" name="options" value="ARRIVAL" autocomplete="off" checked> Saapuvat
+            </label>
+            <label class="btn btn-outline-secondary">
+              <input type="radio" name="options" value="DEPARTING" autocomplete="off"> Lähtevät
+            </label>
+          </div>
+    </div>
+    <div id="table" class="p-3">
+
+    </div>
+
 </body>
+
 </html>

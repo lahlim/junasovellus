@@ -1,23 +1,28 @@
 "use strict";
 let asemaData = [];
+let buttonState = "ARRIVAL";
 // https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=100&station=TPE
 window.onload = function(e){ 
     haeAsemaData();
-    
-    haeData();
+    $('.colors input[type=radio]').on('change', function() {
+        console.log(this.value);
+        buttonState = this.value;
+        haeData(buttonState);
+    });
     console.log(asemaData);
 }
 
+// Select 2 kirjaston haku ja dropdown
 $(document).ready(function() {
     $('.js-example-basic-single').select2();
 });
 
-function haeData(asema){
 
+function haeData(asema, buttonState){
    fetch('https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=100&departed_trains=0&departing_trains=0&station='+asema)
   .then((res) => res.json())
   .then((data) => {
-    //document.getElementById('table').innerHTML = "";
+    document.getElementById('table').innerHTML = "";
 
       data.forEach(function(juna, index){
         // Poistetaan tavarajunat
@@ -52,8 +57,12 @@ function haeData(asema){
         
     });
     jarjestaSaapujat(data);
-    
+    teeTable(data);
+  })
+}
 
+// Luodaan taulukko aseman tietojen mukaan.
+function teeTable(data){
     let output = `<table class="table table-striped table-hover">
     <thead>
       <th class="text-muted">Juna</th>
@@ -64,6 +73,7 @@ function haeData(asema){
     <tbody>`;
     
     for (let i=0; i<10;i++){
+        try{
         output += `
             <tr>
                 <td>${data[i].trainType} ${data[i].trainNumber}</td>
@@ -73,15 +83,16 @@ function haeData(asema){
             </tr>
             
         `;
+        } catch (e){
+            console.log("Taulukon luonnissta virhe(junia alle 10): junia "+i);
+            break;
+        }
     };
     output +=`
     </tbody>
      </table>
     `
     document.getElementById('table').innerHTML = output;
-    
-    
-  })
 }
 
 // järjestetään data asspumisjärjestykseen aikataulun mukaan
@@ -133,7 +144,7 @@ function asematValikkoon(){
     // kuunnellaan select boksin muutosta
     $('#valitsin').on('select2:select', function (e) {
         console.log(this.value);
-        haeData(this.value);
+        haeData(this.value, buttonState);
       });    
 }
 
