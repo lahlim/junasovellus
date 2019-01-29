@@ -10,13 +10,18 @@ let asemaData = [];
 var buttonState = "ARRIVAL";
 var kaupunki = "JY";
 
-window.onload = function(e){ 
+window.onload = function(e){
     haeAsemaData();
+    
     haeData(kaupunki);
     $('.colors input[type=radio]').on('change', function() {       
         buttonState = this.value;
         haeData(kaupunki);
     });
+    // Minuutin välein päivitys
+    setInterval(function(){
+        haeData(kaupunki);
+    }, 60000);
 }
 
 // Select 2 kirjaston haku ja dropdown
@@ -26,6 +31,7 @@ $(document).ready(function() {
 
 
 function haeData(asema){
+    console.log("hakee");
     let url;
     if (buttonState == "ARRIVAL"){
         url = 'https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=50&departed_trains=0&departing_trains=0&station=';
@@ -137,7 +143,8 @@ function formatoiAika(aika) {
     let nolla = "0";
     let tunnit = aika.getHours();
     let minuutit = aika.getMinutes();
-    if (minuutit < 9) minuutit = nolla+=minuutit;
+    if (minuutit < 10) minuutit = nolla+=minuutit;
+    if (tunnit < 10) tunnit = nolla+=tunnit;
     let tuloste = tunnit + ":"+ minuutit;
     return tuloste;
 }
