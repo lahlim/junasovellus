@@ -1,7 +1,7 @@
 /**
- * Commuter trains?
- * Koodin siistiminen ja githubiin lisäys avoimeksi
- * Poista jo lähteneet junat
+ * @ LassiMustonen
+ * 30.01.2019
+ * JavaScript tiedosto junien aikataulusovellukseen.
  */
 
 "use strict";
@@ -12,12 +12,10 @@ var kaupunki = "JY";
 window.onload = function (e) {
     haeAsemaData();
     haeData(kaupunki);
-
-    $('.colors input[type=radio]').on('change', function () {
+    $('.napit input[type=radio]').on('change', function () {
         buttonState = this.value;
         haeData(kaupunki);
     });
-
     // Minuutin välein päivitys
     setInterval(function () {
         haeData(kaupunki);
@@ -34,12 +32,14 @@ $(document).ready(function () {
  */
 function haeData(asema) {
     let url;
+    // Saapuvien ja lähtevien urlit
     if (buttonState == "ARRIVAL") {
         url = 'https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=50&departed_trains=0&departing_trains=0&station=';
     } else url = 'https://rata.digitraffic.fi/api/v1/live-trains?arrived_trains=0&arriving_trains=0&departed_trains=0&departing_trains=50&station=';
     fetch(url + asema)
         .then((res) => res.json())
         .then((data) => {
+            // tyhjätään taulukko
             document.getElementById('table').innerHTML = "";
 
             // Poistetaan tavarajunat
@@ -47,20 +47,21 @@ function haeData(asema) {
                 if (data[i].trainCategory === "Cargo" || data[i].trainCategory == "Locomotive" || data[i].trainCategory == "Shunting") {
                     data.splice(i, 1);
                 }
-                
+
             }
 
-            data.forEach(function (juna, index) {
+            data.forEach(function (juna) {
                 for (let i in juna.timeTableRows) {
                     // haetaan lähtö ja pääteasema
                     juna.lahtoA = juna.timeTableRows[0].stationShortCode;
                     juna.paateA = juna.timeTableRows[i].stationShortCode;
-                    // haetaan aikataulunmukainen ja arvio saapumisesta
+                    // haetaan aikataulunmukainen, ja arvio saapumisesta
 
                     if (asema === juna.timeTableRows[i].stationShortCode && juna.timeTableRows[i].type == buttonState) {
                         try {
-                            juna.saapArvio = juna.timeTableRows[i].liveEstimateTime;
-                            if (juna.saapArvio = !undefined) juna.saapArvio = new Date(juna.timeTableRows[i].liveEstimateTime);
+
+                            juna.arvio = juna.timeTableRows[i].liveEstimateTime;
+                            if (juna.arvio = !undefined) juna.arvio = new Date(juna.timeTableRows[i].liveEstimateTime);
                         } catch (e) { console.log(e); }
                         juna.AikaTaulu = new Date(juna.timeTableRows[i].scheduledTime);
                     }
@@ -77,7 +78,6 @@ function haeData(asema) {
             });
             jarjestaSaapujat(data);
             teeTable(data);
-            console.log(data);
         })
 }
 
@@ -97,7 +97,6 @@ function teeTable(data) {
     <tbody>`;
 
     let lkm = data.length;
-
     for (let i = 0; i < lkm; i++) {
         let peruttu = "<tr>";
         let peruttuCancell = '<td>';
@@ -107,23 +106,30 @@ function teeTable(data) {
             peruttuCancell = '<td> <div class="text-danger" >Cancelled</div>';
         }
         let aika = formatoiAika(data[i].AikaTaulu);
-        let arvio = data[i].saapArvio.getTime();
+        let arvio = data[i].arvio.getTime();
         let taulu = data[i].AikaTaulu.getTime();
 
-        // haetaan saaparvion ja aikataulun erotus
+        // haetaan arvion ja aikataulun erotus
         let ero = arvio - taulu;
         var minuutit = Math.floor((ero / 1000) / 60);
         // jos erotus on 1 minuutti tai enemmän, se tulostetaan
         if (arvio > taulu && minuutit >= 1) {
-            arvio = formatoiAika(data[i].saapArvio);
+            arvio = formatoiAika(data[i].arvio);
             peruttuCancell = '<td class="text-muted">('
             aika += `) <div class="text-danger">${arvio} </div> `
         }
 
+        let nimiNro = data[i].trainType + " " + data[i].trainNumber;
+        // Jos commuter train niin, Commuter train + lineID
+        if (data[i].trainCategory == "Commuter") {
+            nimiNro = "Commuter train " + data[i].commuterLineID;
+        }
+
+        //Table rivien tulostus
         try {
             output += `
             ${peruttu}
-            <td>${data[i].trainType} ${data[i].trainNumber}</td>
+            <td>${nimiNro}</td>
             <td>${data[i].lahtoANimi}</td>
             <td>${data[i].paateANimi}</td>
             ${peruttuCancell}${aika}</td>
@@ -141,7 +147,7 @@ function teeTable(data) {
     document.getElementById('table').innerHTML = output;
 }
 
-// järjestetään data asspumisjärjestykseen aikataulun mukaan
+// järjestetään data saapumisjärjestykseen aikataulun mukaan
 function jarjestaSaapujat(data) {
     data.sort(function (a, b) {
         if (a.AikaTaulu < b.AikaTaulu) return -1;
@@ -181,6 +187,7 @@ function haeAsemaData() {
         })
 }
 
+// Viedään asemat select valikkoon ja JKL valittu vakiona
 function asematValikkoon() {
     for (let i in asemaData) {
         let koodi = asemaData[i].stationShortCode;
